@@ -24,7 +24,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Book {
+public class BookPost {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -50,12 +50,16 @@ public class Book {
 	@Setter private Rental rental;
 
 	@Builder
-	public Book(Account account, BookInfo bookInfo, String address, RentalState rentalState, int availableDays, Rental rental) {
+	public BookPost(Account account, BookInfo bookInfo, String address, RentalState rentalState, int availableDays) {
 		this.account = account;
 		this.bookInfo = bookInfo;
 		this.address = address;
 		this.rentalState = rentalState;
 		this.availableDays = availableDays;
-		this.rental = rental;
+	}
+
+	public void updateBookPost(String address, int availableDays) {
+		this.address = address;
+		this.availableDays = availableDays;
 	}
 }
