@@ -13,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import kongnoodle.libraryPlatform.demo.feat.rental.entity.Rental;
-import kongnoodle.libraryPlatform.demo.feat.rental.entity.RentalState;
 import kongnoodle.libraryPlatform.demo.feat.user.entity.Account;
 import lombok.AccessLevel;
 import lombok.Builder;

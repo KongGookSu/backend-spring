@@ -1,4 +1,4 @@
-package kongnoodle.libraryPlatform.demo.feat.rental.entity;
+package kongnoodle.libraryPlatform.demo.feat.book.entity;
 
 public enum RentalState {
 	RENTAL, RETURN, RESERVATION, NONE

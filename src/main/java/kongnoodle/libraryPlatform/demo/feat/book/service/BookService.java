@@ -15,7 +15,7 @@ import kongnoodle.libraryPlatform.demo.feat.book.dto.bookinfoxml.Item;
 import kongnoodle.libraryPlatform.demo.feat.book.dto.bookinfoxml.Rss;
 import kongnoodle.libraryPlatform.demo.feat.book.dto.enumeration.SearchOption;
 import kongnoodle.libraryPlatform.demo.feat.book.repository.BookRepository;
-import kongnoodle.libraryPlatform.demo.feat.rental.entity.RentalState;
+import kongnoodle.libraryPlatform.demo.feat.book.entity.RentalState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

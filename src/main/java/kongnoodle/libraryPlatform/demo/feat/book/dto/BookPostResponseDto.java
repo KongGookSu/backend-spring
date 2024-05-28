@@ -1,7 +1,7 @@
 package kongnoodle.libraryPlatform.demo.feat.book.dto;
 
 import kongnoodle.libraryPlatform.demo.feat.book.entity.BookPost;
-import kongnoodle.libraryPlatform.demo.feat.rental.entity.RentalState;
+import kongnoodle.libraryPlatform.demo.feat.book.entity.RentalState;
 
 public record BookPostResponseDto(
 	long id,
