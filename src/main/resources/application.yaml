@@ -24,3 +24,9 @@ logging.level:
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
+
+naver:
+  url: https://openapi.naver.com/v1/search/book_adv.xml
+  client:
+    id: ${NAVER_CLIENT_ID}
+    secret: ${NAVER_SECRET_KEY}
