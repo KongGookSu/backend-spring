@@ -119,13 +119,12 @@ public class BookService {
 			StringReader reader = new StringReader(response);
 			Rss rss = (Rss) unmarshaller.unmarshal(reader);
 
-			if (rss.getChannel().getItems().isEmpty()) {
+			if (rss.getChannel().getItems() == null) {
 				throw new IllegalArgumentException("입력한 ISBN에 대한 책이 없습니다.");
 			}
 			Item item = rss.getChannel().getItems().stream().findFirst().orElse(null);
 
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-
 
 			return BookInfo.builder()
 				.title(item.getTitle())
