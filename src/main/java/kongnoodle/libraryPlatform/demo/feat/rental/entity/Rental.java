@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import kongnoodle.libraryPlatform.demo.feat.book.entity.Book;
+import kongnoodle.libraryPlatform.demo.feat.book.entity.BookPost;
 import kongnoodle.libraryPlatform.demo.feat.user.entity.Account;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,13 +34,13 @@ public class Rental {
 	private Account account;
 
 	@OneToOne(mappedBy = "rental")
-	private Book book;
+	private BookPost bookPost;
 
 	@Builder
-	public Rental(LocalDateTime startDate, LocalDateTime endDate, Account account, Book book) {
+	public Rental(LocalDateTime startDate, LocalDateTime endDate, Account account, BookPost bookPost) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.account = account;
-		this.book = book;
+		this.bookPost = bookPost;
 	}
 }
