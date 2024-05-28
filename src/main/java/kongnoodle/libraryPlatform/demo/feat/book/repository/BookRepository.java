@@ -1,10 +1,26 @@
 package kongnoodle.libraryPlatform.demo.feat.book.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Optional;
+import kongnoodle.libraryPlatform.demo.feat.book.dto.enumeration.SearchOption;
+import kongnoodle.libraryPlatform.demo.feat.book.entity.BookInfo;
+import kongnoodle.libraryPlatform.demo.feat.book.entity.BookPost;
 
-import kongnoodle.libraryPlatform.demo.feat.book.entity.Book;
+public interface BookRepository {
 
-@Repository
-public interface BookRepository extends JpaRepository<Book, Long> {
+    Optional<BookInfo> findBookInfoByIsbn(String isbn);
+
+    BookInfo saveBookInfo(BookInfo bookInfo);
+
+    BookPost saveBookPost(BookPost bookPost);
+
+    List<BookInfo> findBookInfoBySearchOption(SearchOption searchOption, String value);
+
+    List<BookPost> findBookPostByBookId(Long bookId);
+
+    List<BookPost> findBookPostByAccountId(Long accountId);
+
+    BookPost getBookPostById(Long bookPostId);
+
+    void deleteBookPostById(Long bookPostId);
 }
