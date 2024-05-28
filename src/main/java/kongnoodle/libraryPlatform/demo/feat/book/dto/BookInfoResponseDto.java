@@ -1,14 +1,15 @@
 package kongnoodle.libraryPlatform.demo.feat.book.dto;
 
+import java.time.LocalDate;
 import kongnoodle.libraryPlatform.demo.feat.book.entity.BookInfo;
 
 public record BookInfoResponseDto(
 	long id,
-	long isbn,
+	String isbn,
 	String title,
 	String author,
 	String publisher,
-	String pubdate,
+	LocalDate pubdate,
 	String imageUri
 ) {
 	public static BookInfoResponseDto from(BookInfo bookInfo) {
