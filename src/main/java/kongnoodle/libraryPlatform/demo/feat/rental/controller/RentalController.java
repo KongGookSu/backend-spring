@@ -1,11 +1,16 @@
 package kongnoodle.libraryPlatform.demo.feat.rental.controller;
 
+import java.util.List;
+import kongnoodle.libraryPlatform.demo.feat.rental.dto.RentalUpdateRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -24,34 +29,39 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Tag(name = "대여", description = "대여 관련 API")
 @RequiredArgsConstructor
-public class rentalController {
+@RequestMapping("/api")
+public class RentalController {
 
 	private final RentalService rentalService;
 
-	@Operation(summary = "대여 조회", description = "단일 대여 정보를 조회한다.")
-	@Parameter(in = ParameterIn.PATH, name = "rentalId", description = "대여 ID", required = true)
-	@GetMapping("/api/rentals/{rentalId}")
-	public RentalResponseDto getRental(@PathVariable Long rentalId) {
-		return rentalService.findRentalById(rentalId);
+	@Operation(summary = "자신의 대여 목록 조회", description = "자신의 대여 목록을 조회한다.")
+	@GetMapping("/my/rentals")
+	public ResponseEntity<List<RentalResponseDto>> getRental() {
+		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
+		Long accountId = null;
+		return ResponseEntity.ok(rentalService.findRentalById(accountId));
 	}
 
-	@Operation(summary = "대여 등록", description = "유저의 대여를 등록하고, 대여 ID를 반환")
-	@PostMapping("/api/rentals")
-	public Long createRental(@RequestBody @Valid RentalRequest rentalrequest) {
-		return rentalService.createRentalByRentalRequest(rentalrequest);
+	@Operation(summary = "대여하기", description = "유저의 대여를 등록")
+	@PostMapping("/rentals")
+	public ResponseEntity<Void> createRental(@RequestBody @Valid RentalRequest rentalrequest) {
+		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
+		Long accountId = null;
+		rentalService.createRental(rentalrequest, accountId);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@Operation(summary = "대여 수정", description = "대여 정보를 수정하고, 수정된 대여 ID를 반환")
+	@Operation(summary = "대여 수정", description = "대여 상태를 변경")
 	@Parameter(in = ParameterIn.PATH, name = "rentalId", description = "대여 ID", required = true)
-	@PutMapping("/api/rentals/{rentalId}")
+	@PutMapping("/rentals/{rentalId}")
 	public Long updateRental(@PathVariable Long rentalId
-			, @RequestBody @Valid RentalRequest rentalRequest) {
-		return rentalService.updateRentalByRentalRequest(rentalId, rentalRequest);
+			, @RequestBody @Valid RentalUpdateRequest rentalUpdateRequest) {
+		return rentalService.updateRentalByRentalRequest(rentalId, rentalUpdateRequest);
 	}
 
-	@Operation(summary = "대여 삭제", description = "대여를 삭제한다.")
+	@Operation(summary = "대여 삭제", description = "대여가 종료된 뒤 대여를 삭제한다.")
 	@Parameter(in = ParameterIn.PATH, name = "rentalId", description = "대여 ID", required = true)
-	@DeleteMapping("/api/rentals/{rentalId}")
+	@DeleteMapping("/rentals/{rentalId}")
 	public void deleteRental(@PathVariable Long rentalId) {
 		rentalService.deleteRentalById(rentalId);
 	}
