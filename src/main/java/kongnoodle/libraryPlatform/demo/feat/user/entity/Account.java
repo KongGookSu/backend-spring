@@ -22,4 +22,7 @@ public class Account {
 	@Setter private String vendor;
 
 	@Setter private String nickname;
+
+	private double latitude; // 위도
+	private double longitude; // 경도
 }

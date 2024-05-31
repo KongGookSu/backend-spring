@@ -16,6 +16,7 @@ import kongnoodle.libraryPlatform.demo.feat.book.dto.bookinfoxml.Rss;
 import kongnoodle.libraryPlatform.demo.feat.book.dto.enumeration.SearchOption;
 import kongnoodle.libraryPlatform.demo.feat.book.repository.BookRepository;
 import kongnoodle.libraryPlatform.demo.feat.book.entity.RentalState;
+import kongnoodle.libraryPlatform.demo.feat.user.entity.Account;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,8 @@ public class BookService {
 			.bookInfo(bookInfo.get())
 //			.account(accountRepository.getReferenceById(accountId))
 			.rentalState(RentalState.NONE)
+			.latitude(request.latitude())
+			.longitude(request.longitude())
 			.build();
 
 		bookRepository.saveBookPost(bookPost);
@@ -67,8 +70,21 @@ public class BookService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<BookPostResponseDto> getBookPostByBookId(Long bookId) {
-		return bookRepository.findBookPostByBookId(bookId).stream()
+	public List<BookPostResponseDto> getBookPostByBookId(Long bookId, Long accountId) {
+		List<BookPost> bookPosts = bookRepository.findBookPostByBookId(bookId);
+		Account account = accountRepository.findById(accountId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
+		double latitude = account.getLatitude();
+		double longitude = account.getLongitude();
+
+		bookPosts.sort((bookPost1, bookPost2) -> {
+			double distance1 = calculateDistance(latitude, longitude, bookPost1.getLatitude(), bookPost1.getLongitude());
+			double distance2 = calculateDistance(latitude, longitude, bookPost2.getLatitude(), bookPost2.getLongitude());
+			return Double.compare(distance1, distance2);
+		});
+
+		return bookPosts.stream()
 			.map(BookPostResponseDto::from)
 			.toList();
 	}
@@ -141,4 +157,14 @@ public class BookService {
 		}
 	}
 
+	private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+		double earthRadius = 6371;
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLon = Math.toRadians(lon2 - lon1);
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+			Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+				Math.sin(dLon / 2) * Math.sin(dLon / 2);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		return earthRadius * c;
+	}
 }
