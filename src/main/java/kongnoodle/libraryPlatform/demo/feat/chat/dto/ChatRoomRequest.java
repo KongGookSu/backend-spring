@@ -3,13 +3,13 @@ package kongnoodle.libraryPlatform.demo.feat.chat.dto;
 import kongnoodle.libraryPlatform.demo.feat.chat.entity.ChatRoom;
 
 public record ChatRoomRequest(
-    Long LenderId,
+    Long lenderId,
     String bookTitle
 ) {
     public ChatRoom toEntity(Long BorrowerId) {
         return ChatRoom.builder()
             .bookTitle(bookTitle)
-            .LenderId(LenderId)
+            .LenderId(lenderId)
             .BorrowerId(BorrowerId)
             .build();
     }

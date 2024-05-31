@@ -30,7 +30,7 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-    @MessageMapping("/channel/{channelId}")
+    @MessageMapping("/chat-room/{chatRoomId}")
     public void sendMessage(ChatMessage chatMessage, @DestinationVariable Long chatRoomId) {
         chatService.saveChat(chatMessage, chatRoomId);
         messagingTemplate.convertAndSend("/sub/chat-room/" + chatRoomId
