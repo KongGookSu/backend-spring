@@ -16,21 +16,54 @@ public class AccountService {
 	private final AccountRepository accountRepository;
 
 	@Transactional(readOnly = true)
-	public AccountResponseDto findAccountById(Long accountId) {
-		return accountRepository.findById(accountId).map(AccountResponseDto::from)
+	public AccountResponseDto findAccountById(Long id) {
+		return accountRepository.findById(id).map(AccountResponseDto::from)
 			.orElseThrow(
 			() -> new IllegalArgumentException("해당 계정이 존재하지 않습니다.")
 		);
 	}
 
+	// email로 가입한 유저가 없다면 가입, 가입된 유저라면 정보 업데이트
 	@Transactional
-	public void updateAccount(AccountUpdateRequest request) {
-		Account account = accountRepository.findById(request.id()).orElseThrow(
+	public Long createAccount(Long userId,AccountUpdateRequest request) {
+		Account account = accountRepository.findById(userId).orElse(
+			Account.builder()
+				.email(request.email())
+				.vendor(request.vendor())
+				.nickname(request.nickname())
+				.build()
+		);
+		return accountRepository.save(account).getId();
+	}
+
+	@Transactional
+	public Long createAccountByEmail(AccountUpdateRequest request) {
+		Account account = accountRepository.findByEmail(request.email()).orElse(
+			Account.builder()
+				.email(request.email())
+				.vendor(request.vendor())
+				.nickname(request.nickname())
+				.build()
+		);
+		return accountRepository.save(account).getId();
+	}
+
+	@Transactional
+	public void updateAccount(Long userId ,AccountUpdateRequest request) {
+		Account account = accountRepository.findById(userId).orElseThrow(
 			() -> new IllegalArgumentException("해당 계정이 존재하지 않습니다.")
 		);
 		account.setEmail(request.email());
 		account.setVendor(request.vendor());
 		account.setNickname(request.nickname());
 		accountRepository.save(account);
+	}
+
+	@Transactional
+	public void deleteAccount(Long userId) {
+		Account account = accountRepository.findById(userId).orElseThrow(
+			() -> new IllegalArgumentException("해당 계정이 존재하지 않습니다.")
+		);
+		accountRepository.delete(account);
 	}
 }
