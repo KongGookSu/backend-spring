@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,4 +23,11 @@ public class Account {
 	@Setter private String vendor;
 
 	@Setter private String nickname;
+
+	@Builder
+	private Account(String email, String vendor, String nickname) {
+		this.email = email;
+		this.vendor = vendor;
+		this.nickname = nickname;
+	}
 }
