@@ -60,7 +60,9 @@ public class BookController {
 	@Parameter(in = ParameterIn.PATH, name = "bookId", description = "책 ID", required = true)
 	@GetMapping("/book-info/{bookInfoId}/book-post")
 	public ResponseEntity<List<BookPostResponseDto>> getBookPost(@PathVariable Long bookInfoId) {
-		return ResponseEntity.ok(bookService.getBookPostByBookId(bookInfoId));
+		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
+		Long accountId = null;
+		return ResponseEntity.ok(bookService.getBookPostByBookId(bookInfoId, accountId));
 	}
 
 	@Operation(summary = "내 책 게시글 조회", description = "내가 등록한 책 게시글을 조회한다.")
