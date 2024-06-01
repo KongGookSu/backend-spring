@@ -1,10 +1,15 @@
 package kongnoodle.libraryPlatform.demo.oauth2;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import kongnoodle.libraryPlatform.demo.core.authentication.jwt.JwtTokenGenerator;
+import kongnoodle.libraryPlatform.demo.core.authentication.jwt.Token;
+import kongnoodle.libraryPlatform.demo.feat.user.dto.AccountUpdateRequest;
+import kongnoodle.libraryPlatform.demo.feat.user.service.AccountService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -12,13 +17,24 @@ import lombok.RequiredArgsConstructor;
 public class Oauth2LoginController {
 
 	private final Oauth2RestApiClient oauth2RestApiClient;
+	private final JwtTokenGenerator jwtTokenGenerator;
+	private final AccountService accountService;
+
+	@Value("${oauth2.google-client-id}")
+	private String googleClientId;
+	@Value("${oauth2.google-client-secret}")
+	private String googleClientSecret;
 
 	@GetMapping("/login/test/oauth2/google")
-	public ResponseEntity<GoogleTokenInfoModel> getGoogleTokenInfo(
+	public ResponseEntity<Token> getGoogleTokenInfo(
 		@RequestParam("code") String code) {
-		return oauth2RestApiClient.getGoogleTokenInfo(code, "clinet-id","clinet-secret", "http://localhost:8080/login/oauth/google","authorization_code");
-	}
+		GoogleTokenInfoModel googleTokenInfoModel = oauth2RestApiClient.getGoogleTokenInfo(code, googleClientId, googleClientSecret,
+			"http://localhost:8080/login/oauth/google", "authorization_code").getBody();
+		GoogleUserInfoModel googleUserInfoModel =  oauth2RestApiClient.getGoogleUserInfo("Bearer " + googleTokenInfoModel.access_token()).getBody();
+		Long id = accountService.createAccountByEmail(AccountUpdateRequest.of(googleUserInfoModel.email(), "google", googleUserInfoModel.name()));
 
+		return ResponseEntity.ok(jwtTokenGenerator.createToken(id.toString()));
+	}
 	@GetMapping("/login/test/oauth2/google/userInfo")
 	public ResponseEntity<GoogleUserInfoModel> getGoogleUserInfo(
 		@RequestParam("token") String accessToken) {
