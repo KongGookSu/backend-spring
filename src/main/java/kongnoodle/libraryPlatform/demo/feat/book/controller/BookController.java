@@ -1,6 +1,8 @@
 package kongnoodle.libraryPlatform.demo.feat.book.controller;
 
 import java.util.List;
+
+import kongnoodle.libraryPlatform.demo.core.annotations.TokenUserId;
 import kongnoodle.libraryPlatform.demo.feat.book.dto.BookInfoResponseDto;
 import kongnoodle.libraryPlatform.demo.feat.book.dto.BookPostResponseDto;
 import kongnoodle.libraryPlatform.demo.feat.book.dto.BookUpdateRequest;
@@ -40,9 +42,8 @@ public class BookController {
 	@Operation(summary = "사용자 책 게시글 등록", description = "유저의 책을 등록")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/book-post")
-	public ResponseEntity<Void> createBook(@RequestBody @Valid BookCreateRequest request) {
-		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
-		Long accountId = null;
+	public ResponseEntity<Void> createBook(@RequestBody @Valid BookCreateRequest request,
+										   @TokenUserId Long accountId) {
 		bookService.createBookByBookRequest(request, accountId);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
@@ -59,27 +60,30 @@ public class BookController {
 	@Operation(summary = "책 게시글 조회", description = "책에 해당하는 게시글을 조회한다.")
 	@Parameter(in = ParameterIn.PATH, name = "bookId", description = "책 ID", required = true)
 	@GetMapping("/book-info/{bookInfoId}/book-post")
-	public ResponseEntity<List<BookPostResponseDto>> getBookPost(@PathVariable Long bookInfoId) {
-		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
-		Long accountId = null;
-		return ResponseEntity.ok(bookService.getBookPostByBookId(bookInfoId, accountId));
+	public ResponseEntity<List<BookPostResponseDto>> getBookPost(@PathVariable Long bookInfoId,
+																 @TokenUserId Long userId) {
+		return ResponseEntity.ok(bookService.getBookPostByBookId(bookInfoId, userId));
+	}
+
+
+	@GetMapping("/city/book-post")
+	public ResponseEntity<List<BookPostResponseDto>> getBookPostByCity (@TokenUserId Long userId) {
+		return ResponseEntity.ok(bookService.getBookPostByCity(userId));
 	}
 
 	@Operation(summary = "내 책 게시글 조회", description = "내가 등록한 책 게시글을 조회한다.")
 	@GetMapping("/my/book-post")
-	public ResponseEntity<List<BookPostResponseDto>> getMyBookPost() {
-		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
-		Long accountId = null;
-		return ResponseEntity.ok(bookService.getMyBookPost(accountId));
+	public ResponseEntity<List<BookPostResponseDto>> getMyBookPost(@TokenUserId Long userId) {
+		return ResponseEntity.ok(bookService.getMyBookPost(userId));
 	}
 
 	@Operation(summary = "책 게시글 수정", description = "책 게시글 정보를 수정하고, 수정된 책 게시글 ID를 반환")
 	@Parameter(in = ParameterIn.PATH, name = "bookPostId", description = "책 게시글 ID", required = true)
 	@PutMapping("/book-post/{bookPostId}")
-	public ResponseEntity<Void> updateBookPost(@PathVariable Long bookPostId, @RequestBody @Valid BookUpdateRequest request) {
-		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
-		Long accountId = null;
-		bookService.updateBookPost(bookPostId, request, accountId);
+	public ResponseEntity<Void> updateBookPost(@PathVariable Long bookPostId,
+											   @RequestBody @Valid BookUpdateRequest request,
+											   @TokenUserId Long userId) {
+		bookService.updateBookPost(bookPostId, request, userId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
@@ -87,10 +91,9 @@ public class BookController {
 	@Parameter(in = ParameterIn.PATH, name = "bookPostId", description = "책 게시글 ID", required = true)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping("/book-post/{bookPostId}")
-	public ResponseEntity<Void> deleteBookPost(@PathVariable Long bookPostId) {
-		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
-		Long accountId = null;
-		bookService.deleteBookById(bookPostId, accountId);
+	public ResponseEntity<Void> deleteBookPost(@PathVariable Long bookPostId,
+											   @TokenUserId Long userId) {
+		bookService.deleteBookById(bookPostId, userId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

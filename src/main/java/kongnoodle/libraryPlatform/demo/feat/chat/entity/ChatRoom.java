@@ -16,13 +16,13 @@ public class ChatRoom {
     private Long id;
 
     private String bookTitle;
-    private Long LenderId;
-    private Long BorrowerId;
+    private Long lenderId;
+    private Long borrowerId;
 
     @Builder
     public ChatRoom(String bookTitle, Long LenderId, Long BorrowerId) {
         this.bookTitle = bookTitle;
-        this.LenderId = LenderId;
-        this.BorrowerId = BorrowerId;
+        this.lenderId = LenderId;
+        this.borrowerId = BorrowerId;
     }
 }

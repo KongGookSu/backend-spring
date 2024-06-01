@@ -23,4 +23,6 @@ public interface BookRepository {
     BookPost getBookPostById(Long bookPostId);
 
     void deleteBookPostById(Long bookPostId);
+
+    List<BookPost> findBookPostByCity(String city);
 }

@@ -63,4 +63,9 @@ public class BookRepositoryImpl implements BookRepository{
     public void deleteBookPostById(Long bookPostId) {
         bookPostJpaRepository.deleteById(bookPostId);
     }
+
+    @Override
+    public List<BookPost> findBookPostByCity(String city) {
+        return bookPostJpaRepository.findByCityContaining(city);
+    }
 }

@@ -46,6 +46,7 @@ public class BookPost {
 
 	private double latitude; // 위도
 	private double longitude; // 경도
+	private String city;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "rental_id")
@@ -53,7 +54,7 @@ public class BookPost {
 
 	@Builder
 	public BookPost(Account account, BookInfo bookInfo, String address, RentalState rentalState,
-					int availableDays, double latitude, double longitude) {
+					int availableDays, double latitude, double longitude, String city) {
 		this.account = account;
 		this.bookInfo = bookInfo;
 		this.address = address;
@@ -61,6 +62,7 @@ public class BookPost {
 		this.availableDays = availableDays;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.city = city;
 	}
 
 	public void updateBookPost(String address, int availableDays) {
