@@ -28,6 +28,8 @@ public class Account {
 	private double latitude; // 위도
 	private double longitude; // 경도
 
+	private String city;
+
 	@Builder
 	private Account(String email, String vendor, String nickname) {
 		this.email = email;

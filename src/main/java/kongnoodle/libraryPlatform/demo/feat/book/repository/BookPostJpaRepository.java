@@ -12,4 +12,6 @@ public interface BookPostJpaRepository extends JpaRepository<BookPost, Long> {
     List<BookPost> findByBookInfoId(Long bookId);
 
     List<BookPost> findByAccountId(Long accountId);
+
+    List<BookPost> findByCityContaining(String city);
 }

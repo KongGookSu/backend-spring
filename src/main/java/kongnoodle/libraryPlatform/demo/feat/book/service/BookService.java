@@ -49,14 +49,18 @@ public class BookService {
 			bookInfo = Optional.ofNullable(bookRepository.saveBookInfo(naverBookInfo));
 		}
 
+		Account account = accountRepository.findById(accountId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
 		BookPost bookPost = BookPost.builder()
 			.address(request.address())
 			.availableDays(request.availableRentalDays())
 			.bookInfo(bookInfo.get())
-//			.account(accountRepository.getReferenceById(accountId))
+			.account(account)
 			.rentalState(RentalState.NONE)
-			.latitude(request.latitude())
-			.longitude(request.longitude())
+			.latitude(account.getLatitude())
+			.longitude(account.getLongitude())
+			.city(account.getCity())
 			.build();
 
 		bookRepository.saveBookPost(bookPost);
@@ -99,9 +103,9 @@ public class BookService {
 	@Transactional
 	public void updateBookPost(Long bookPostId, BookUpdateRequest request, Long accountId) {
 		BookPost bookPost = bookRepository.getBookPostById(bookPostId);
-//		if (bookPost.getAccount().getId() != accountId) {
-//			throw new IllegalArgumentException("해당 게시글에 대한 수정 권한이 없습니다.");
-//		}
+		if (bookPost.getAccount().getId() != accountId) {
+			throw new IllegalArgumentException("해당 게시글에 대한 수정 권한이 없습니다.");
+		}
 
 		bookPost.updateBookPost(request.address(), request.availableRentalDays());
 	}
@@ -109,11 +113,21 @@ public class BookService {
 	@Transactional
 	public void deleteBookById(Long bookPostId, Long accountId) {
 		BookPost bookPost = bookRepository.getBookPostById(bookPostId);
-//		if (bookPost.getAccount().getId() != accountId) {
-//			throw new IllegalArgumentException("해당 게시글에 대한 삭제 권한이 없습니다.");
-//		}
+		if (bookPost.getAccount().getId() != accountId) {
+			throw new IllegalArgumentException("해당 게시글에 대한 삭제 권한이 없습니다.");
+		}
 
 		bookRepository.deleteBookPostById(bookPostId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<BookPostResponseDto> getBookPostByCity(Long userId) {
+		Account account = accountRepository.findById(userId)
+				.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
+		return bookRepository.findBookPostByCity(account.getCity()).stream()
+				.map(BookPostResponseDto::from)
+				.toList();
 	}
 
 
