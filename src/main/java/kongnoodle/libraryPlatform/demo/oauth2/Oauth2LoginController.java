@@ -1,11 +1,19 @@
 package kongnoodle.libraryPlatform.demo.oauth2;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kongnoodle.libraryPlatform.demo.core.authentication.jwt.JwtTokenGenerator;
 import kongnoodle.libraryPlatform.demo.core.authentication.jwt.Token;
@@ -28,11 +36,29 @@ public class Oauth2LoginController {
 
 	@PostMapping("/login/oauth2/google")
 	public ResponseEntity<Token> jwtTokenFromGoogleCode (
-		@RequestParam("code") String code) {
-		GoogleTokenInfoModel googleTokenInfoModel = oauth2RestApiClient.getGoogleTokenInfo(code, googleClientId, googleClientSecret,
-			"http://localhost:8080/login/oauth/google", "authorization_code").getBody();
-		GoogleUserInfoModel googleUserInfoModel =  oauth2RestApiClient.getGoogleUserInfo("Bearer " + googleTokenInfoModel.access_token()).getBody();
-		Long id = accountService.createAccountByEmail(AccountUpdateRequest.of(googleUserInfoModel.email(), "google", googleUserInfoModel.name()));
+		@RequestBody String idToken
+	) throws JsonProcessingException {
+		String payload = idToken.split("\\.")[1];
+
+		byte[] decodedBytes = Base64.getUrlDecoder().decode(payload);
+		String decodedString = new String(decodedBytes, StandardCharsets.UTF_8);
+
+		// JSON 파싱
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode payloadJson = objectMapper.readTree(decodedString);
+
+		// 필요한 정보 추출 (예: email)
+		String email = payloadJson.get("email").asText();
+		String name = payloadJson.get("name").asText();
+
+
+
+
+
+		// GoogleTokenInfoModel googleTokenInfoModel = oauth2RestApiClient.getGoogleTokenInfo(code, googleClientId, googleClientSecret,
+		// 	"http://localhost:8080/login/oauth/google", "authorization_code").getBody();
+		// GoogleUserInfoModel googleUserInfoModel =  oauth2RestApiClient.getGoogleUserInfo("Bearer " + googleTokenInfoModel.access_token()).getBody();
+		Long id = accountService.createAccountByEmail(AccountUpdateRequest.of(email, "google", name));
 
 		return ResponseEntity.ok(jwtTokenGenerator.createToken(id.toString()));
 	}
