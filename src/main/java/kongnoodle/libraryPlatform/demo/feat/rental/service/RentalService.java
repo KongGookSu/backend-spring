@@ -1,7 +1,9 @@
 package kongnoodle.libraryPlatform.demo.feat.rental.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kongnoodle.libraryPlatform.demo.feat.book.entity.RentalState;
+import kongnoodle.libraryPlatform.demo.feat.book.repository.BookRepository;
 import kongnoodle.libraryPlatform.demo.feat.rental.dto.RentalUpdateRequest;
 import kongnoodle.libraryPlatform.demo.feat.user.repository.AccountRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class RentalService {
 	private final RentalRepository rentalRepository;
 	private final BookPostJpaRepository bookPostJpaRepository;
+	private final BookRepository bookRepository;
 	private final AccountRepository accountRepository;
 
 	@Transactional(readOnly = true)
@@ -30,20 +33,19 @@ public class RentalService {
 	}
 
 	@Transactional
-	public void createRental(RentalRequest rentalRequest, Long accountId) {
-		BookPost bookPost = bookPostJpaRepository.findById(rentalRequest.bookId()).orElseThrow(
-			() -> new IllegalArgumentException("해당 책이 존재하지 않습니다.")
-		);
-		if (bookPost.getRentalState() != RentalState.NONE) {
+	public void createRental(Long bookPostId, Long accountId) {
+		BookPost bookPost = bookRepository.getBookPostById(bookPostId);
+
+		if (bookPost.getRentalState() == RentalState.RENTAL) {
 			throw new IllegalArgumentException("이미 대여된 책입니다.");
 		}
-		if (bookPost.getAccount().getId() != accountId) {
-			throw new IllegalArgumentException("대여 권한이 없습니다.");
-		}
+
+		bookPost.setRentalState(RentalState.RENTAL);
+		int availableDays = bookPost.getAvailableDays();
 
 		Rental rental = Rental.builder()
-			.startDate(rentalRequest.startDate())
-			.endDate(rentalRequest.endDate())
+			.startDate(LocalDateTime.now())
+			.endDate(LocalDateTime.now().plusDays(availableDays))
 			.account(accountRepository.getReferenceById(accountId))
 			.build();
 

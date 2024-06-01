@@ -1,6 +1,8 @@
 package kongnoodle.libraryPlatform.demo.feat.rental.controller;
 
 import java.util.List;
+
+import kongnoodle.libraryPlatform.demo.core.annotations.TokenUserId;
 import kongnoodle.libraryPlatform.demo.feat.rental.dto.RentalUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,11 +45,10 @@ public class RentalController {
 	}
 
 	@Operation(summary = "대여하기", description = "유저의 대여를 등록")
-	@PostMapping("/rentals")
-	public ResponseEntity<Void> createRental(@RequestBody @Valid RentalRequest rentalrequest) {
-		//Todo: 로그인한 사용자의 ID를 가져오는 로직이 필요
-		Long accountId = null;
-		rentalService.createRental(rentalrequest, accountId);
+	@PostMapping("/book-post/{bookId}/rental")
+	public ResponseEntity<Void> createRental(@PathVariable Long bookId,
+											 @TokenUserId Long accountId) {
+		rentalService.createRental(bookId, accountId);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
