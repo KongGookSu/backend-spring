@@ -24,12 +24,10 @@ public class Account {
 
 	@Setter private String nickname;
 
-<<<<<<< HEAD
-=======
+
 	private double latitude; // 위도
 	private double longitude; // 경도
 
->>>>>>> b57e8e2 ([feat] 위도 경도 추가)
 	@Builder
 	private Account(String email, String vendor, String nickname) {
 		this.email = email;
