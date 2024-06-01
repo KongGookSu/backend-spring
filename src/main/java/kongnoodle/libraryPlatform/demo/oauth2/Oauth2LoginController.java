@@ -3,6 +3,7 @@ package kongnoodle.libraryPlatform.demo.oauth2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,8 +26,8 @@ public class Oauth2LoginController {
 	@Value("${oauth2.google-client-secret}")
 	private String googleClientSecret;
 
-	@GetMapping("/login/test/oauth2/google")
-	public ResponseEntity<Token> getGoogleTokenInfo(
+	@PostMapping("/login/oauth2/google")
+	public ResponseEntity<Token> jwtTokenFromGoogleCode (
 		@RequestParam("code") String code) {
 		GoogleTokenInfoModel googleTokenInfoModel = oauth2RestApiClient.getGoogleTokenInfo(code, googleClientId, googleClientSecret,
 			"http://localhost:8080/login/oauth/google", "authorization_code").getBody();
@@ -35,7 +36,7 @@ public class Oauth2LoginController {
 
 		return ResponseEntity.ok(jwtTokenGenerator.createToken(id.toString()));
 	}
-	@GetMapping("/login/test/oauth2/google/userInfo")
+	@GetMapping("/logi/oauth2/google/userInfo")
 	public ResponseEntity<GoogleUserInfoModel> getGoogleUserInfo(
 		@RequestParam("token") String accessToken) {
 		return oauth2RestApiClient.getGoogleUserInfo("Bearer " + accessToken);
