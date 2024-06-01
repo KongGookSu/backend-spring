@@ -49,14 +49,17 @@ public class BookService {
 			bookInfo = Optional.ofNullable(bookRepository.saveBookInfo(naverBookInfo));
 		}
 
+		Account account = accountRepository.findById(accountId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
 		BookPost bookPost = BookPost.builder()
 			.address(request.address())
 			.availableDays(request.availableRentalDays())
 			.bookInfo(bookInfo.get())
-//			.account(accountRepository.getReferenceById(accountId))
+			.account(account)
 			.rentalState(RentalState.NONE)
-			.latitude(request.latitude())
-			.longitude(request.longitude())
+			.latitude(account.getLatitude())
+			.longitude(account.getLongitude())
 			.build();
 
 		bookRepository.saveBookPost(bookPost);
